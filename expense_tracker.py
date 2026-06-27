@@ -14,6 +14,7 @@ import json
 import os
 import tkinter as tk
 from tkinter import ttk, messagebox
+from datetime import datetime
 
 FILE_NAME="expenses.json"
 
@@ -47,25 +48,45 @@ def clear():
     desc_var.set("")
 
 def add():
+
     if not date_var.get() or not amount_var.get() or not category_var.get():
-        messagebox.showerror("Error","Please complete all required fields.")
+        messagebox.showerror("Error", "Please complete all required fields.")
         return
+
+    # Validate date format (YYYY-MM-DD)
     try:
-        amount=float(amount_var.get())
-    except:
-        messagebox.showerror("Error","Amount must be numeric.")
+        datetime.strptime(date_var.get(), "%Y-%m-%d")
+    except ValueError:
+        messagebox.showerror(
+            "Invalid Date",
+            "Date must be in the format YYYY-MM-DD.\nExample: 2026-06-27"
+        )
+        return
+
+    # Validate amount
+    try:
+        amount = float(amount_var.get())
+        if amount <= 0:
+            raise ValueError
+    except ValueError:
+        messagebox.showerror(
+            "Invalid Amount",
+            "Amount must be a positive number."
+        )
         return
 
     expenses.append({
-        "date":date_var.get(),
-        "amount":amount,
-        "category":category_var.get(),
-        "description":desc_var.get()
+        "date": date_var.get(),
+        "amount": amount,
+        "category": category_var.get(),
+        "description": desc_var.get()
     })
+
     save_data()
     refresh()
     clear()
-    messagebox.showinfo("Success","Expense added.")
+
+    messagebox.showinfo("Success", "Expense added successfully!")
 
 def delete():
     sel=tree.selection()
@@ -126,15 +147,27 @@ labels=["Date","Amount","Category","Description"]
 for r,l in enumerate(labels):
     tk.Label(frm,text=l).grid(row=r,column=0,sticky="w",padx=10,pady=5)
 
-tk.Entry(frm,textvariable=date_var,width=30).grid(row=0,column=1)
+tk.Entry(frm, textvariable=date_var, width=30).grid(row=0, column=1)
 
-tk.Entry(frm,textvariable=amount_var,width=30).grid(row=1,column=1)
+tk.Entry(frm, textvariable=amount_var, width=30).grid(row=1, column=1)
 
-ttk.Combobox(frm,textvariable=category_var,
-values=["Food","Transport","Shopping","Bills","Entertainment","Other"],
-width=27).grid(row=2,column=1)
+ttk.Combobox(
+    frm,
+    textvariable=category_var,
+    values=["Food", "Transport", "Shopping", "Bills", "Entertainment", "Other"],
+    width=27
+).grid(row=2, column=1)
 
-tk.Entry(frm,textvariable=desc_var,width=30).grid(row=3,column=1)
+tk.Entry(frm, textvariable=desc_var, width=30).grid(row=3, column=1)
+
+# -----------------------------
+# Search Field
+# -----------------------------
+tk.Label(frm, text="Search").grid(row=4, column=0, padx=10, pady=5, sticky="w")
+
+search_var = tk.StringVar()
+
+tk.Entry(frm, textvariable=search_var, width=30).grid(row=4, column=1)
 
 b=tk.Frame(root)
 b.pack(pady=10)
