@@ -1,8 +1,14 @@
 [
     {
         "date": "2026-06-27",
-        "amount": 300.0,
-        "category": "Transport",
-        "description": "uber"
+        "amount": 50.0,
+        "category": "Entertainment",
+        "description": "cinema"
+    },
+    {
+        "date": "2026-07-02",
+        "amount": 499.0,
+        "category": "Bills",
+        "description": "Electricity"
     }
 ]

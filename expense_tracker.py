@@ -77,6 +77,33 @@ def delete():
     save_data()
     refresh()
 
+def search():
+    keyword = desc_var.get().lower()
+
+    if keyword == "":
+        refresh()
+        return
+
+    for row in tree.get_children():
+        tree.delete(row)
+
+    found = False
+
+    for i, e in enumerate(expenses):
+        if (keyword in e["description"].lower() or
+                keyword in e["category"].lower()):
+
+            tree.insert("", tk.END, iid=i, values=(
+                e["date"],
+                e["amount"],
+                e["category"],
+                e["description"]
+            ))
+            found = True
+
+    if not found:
+        messagebox.showinfo("Search", "No matching expense found.")
+
 def total():
     t=sum(e["amount"] for e in expenses)
     messagebox.showinfo("Total",f"Total Expenses: ${t:.2f}")
@@ -112,10 +139,15 @@ tk.Entry(frm,textvariable=desc_var,width=30).grid(row=3,column=1)
 b=tk.Frame(root)
 b.pack(pady=10)
 
-tk.Button(b,text="Add Expense",command=add,width=15).grid(row=0,column=0,padx=5)
-tk.Button(b,text="Delete",command=delete,width=15).grid(row=0,column=1,padx=5)
-tk.Button(b,text="Calculate Total",command=total,width=15).grid(row=0,column=2,padx=5)
-tk.Button(b,text="Clear",command=clear,width=15).grid(row=0,column=3,padx=5)
+tk.Button(b, text="Add Expense", command=add, width=15).grid(row=0, column=0, padx=5)
+
+tk.Button(b, text="Search", command=search, width=15).grid(row=0, column=1, padx=5)
+
+tk.Button(b, text="Delete", command=delete, width=15).grid(row=0, column=2, padx=5)
+
+tk.Button(b, text="Calculate Total", command=total, width=15).grid(row=0, column=3, padx=5)
+
+tk.Button(b, text="Clear", command=clear, width=15).grid(row=0, column=4, padx=5)
 
 cols=("Date","Amount","Category","Description")
 tree=ttk.Treeview(root,columns=cols,show="headings",height=15)
