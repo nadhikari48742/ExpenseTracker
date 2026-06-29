@@ -1,0 +1,2 @@
+2026-05-25|50|transport|fare
+2026-06-26|100|food|lunch
